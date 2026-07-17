@@ -3000,7 +3000,7 @@ input:focus-visible {
    RESPONSIVE — THUMBNAILS
    ========================================================================== */
 
-@media (max-width: 1023px) and (min-width: 768px) {
+@media (max-width: 1023px) and (min-width: 769px) {
   .thumbnails-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
@@ -3450,7 +3450,7 @@ input:focus-visible {
 }
 
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .thumbnails-grid {
     display: flex;
     overflow-x: auto;
@@ -3464,6 +3464,11 @@ input:focus-visible {
     /* Styled scrollbar for Firefox */
     scrollbar-width: thin;
     scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.05);
+  }
+
+  /* Disable scroll snap during animation to avoid juddering */
+  .thumbnails-grid.is-autoscrolling {
+    scroll-snap-type: none;
   }
 
   .thumbnails-grid::-webkit-scrollbar {
@@ -3485,8 +3490,9 @@ input:focus-visible {
   .thumbnail-card.featured,
   .thumbnail-card.shorts,
   .thumbnail-card.standard {
-    flex: 0 0 85%; /* Let the next card peek in on the right edge */
-    scroll-snap-align: start;
+    flex: 0 0 80vw; /* Let the next card peek in on the right edge */
+    max-width: 340px; /* Cap width on wider viewports like tablets */
+    scroll-snap-align: center;
     height: auto;
     padding: 12px;
     border-radius: 12px;

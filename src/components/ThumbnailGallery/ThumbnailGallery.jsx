@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { portfolioThumbnails } from '../../data/thumbnails';
 
@@ -64,6 +64,181 @@ function ThumbnailCard({ item, index, onSelect }) {
 /* ─── Main Gallery section ─── */
 export default function ThumbnailGallery({ onSelect }) {
   const headerRevealRef = useScrollReveal();
+  const gridRef = useRef(null);
+
+  useEffect(() => {
+    const container = gridRef.current;
+    if (!container) return;
+
+    // Media query configuration for mobile viewport check (<= 768px)
+    const isMobileQuery = window.matchMedia('(max-width: 768px)');
+    const prefersMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let isMobile = isMobileQuery.matches;
+    let prefersReducedMotion = prefersMotionQuery.matches;
+
+    let animationFrameId = null;
+    let lastTime = null;
+    let scrollDirection = 1; // 1 = forward, -1 = backward (ping-pong style)
+    const speed = 35; // speed in pixels per second
+    let isPaused = false;
+    let resumeTimeoutId = null;
+    let isUserInteracting = false;
+    let currentScrollLeft = container.scrollLeft;
+
+    const scrollStep = (timestamp) => {
+      if (!lastTime) {
+        lastTime = timestamp;
+        animationFrameId = requestAnimationFrame(scrollStep);
+        return;
+      }
+
+      const elapsed = (timestamp - lastTime) / 1000; // time in seconds
+      lastTime = timestamp;
+
+      // Only perform auto-scroll if conditions are met
+      if (
+        isMobile &&
+        !prefersReducedMotion &&
+        !isPaused &&
+        !isUserInteracting &&
+        document.visibilityState === 'visible'
+      ) {
+        const delta = speed * elapsed * scrollDirection;
+        currentScrollLeft += delta;
+
+        const maxScroll = container.scrollWidth - container.clientWidth;
+
+        if (currentScrollLeft >= maxScroll) {
+          currentScrollLeft = maxScroll;
+          scrollDirection = -1; // Reverse direction (ping-pong)
+        } else if (currentScrollLeft <= 0) {
+          currentScrollLeft = 0;
+          scrollDirection = 1; // Go forward (ping-pong)
+        }
+
+        container.scrollLeft = currentScrollLeft;
+      }
+
+      animationFrameId = requestAnimationFrame(scrollStep);
+    };
+
+    const startAutoScroll = () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      container.classList.add('is-autoscrolling');
+      lastTime = null;
+      currentScrollLeft = container.scrollLeft;
+      animationFrameId = requestAnimationFrame(scrollStep);
+    };
+
+    const stopAutoScroll = () => {
+      container.classList.remove('is-autoscrolling');
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    const pauseAutoScroll = () => {
+      isPaused = true;
+      container.classList.remove('is-autoscrolling');
+      if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+
+      resumeTimeoutId = setTimeout(() => {
+        if (!isUserInteracting) {
+          isPaused = false;
+          container.classList.add('is-autoscrolling');
+          currentScrollLeft = container.scrollLeft;
+          lastTime = null;
+        }
+      }, 5000); // 5 seconds wait before resuming
+    };
+
+    const handleInteractionStart = () => {
+      isUserInteracting = true;
+      isPaused = true;
+      container.classList.remove('is-autoscrolling');
+      if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+    };
+
+    const handleInteractionEnd = () => {
+      isUserInteracting = false;
+      pauseAutoScroll();
+    };
+
+    const handleScroll = () => {
+      // Keep track of scroll positions during pointer/drag interaction
+      if (isUserInteracting || isPaused) {
+        currentScrollLeft = container.scrollLeft;
+      }
+    };
+
+    const handleMobileChange = (e) => {
+      isMobile = e.matches;
+      resetAutoScroll();
+    };
+
+    const handleMotionChange = (e) => {
+      prefersReducedMotion = e.matches;
+      resetAutoScroll();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        if (isMobile && !prefersReducedMotion && !isUserInteracting) {
+          currentScrollLeft = container.scrollLeft;
+          lastTime = null;
+          isPaused = false;
+          container.classList.add('is-autoscrolling');
+        }
+      } else {
+        isPaused = true;
+        container.classList.remove('is-autoscrolling');
+      }
+    };
+
+    const resetAutoScroll = () => {
+      if (isMobile && !prefersReducedMotion) {
+        startAutoScroll();
+      } else {
+        stopAutoScroll();
+      }
+    };
+
+    // Event listeners
+    isMobileQuery.addEventListener('change', handleMobileChange);
+    prefersMotionQuery.addEventListener('change', handleMotionChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    const eventOptions = { passive: true };
+    container.addEventListener('pointerdown', handleInteractionStart, eventOptions);
+    window.addEventListener('pointerup', handleInteractionEnd, eventOptions);
+    window.addEventListener('pointercancel', handleInteractionEnd, eventOptions);
+    container.addEventListener('touchstart', handleInteractionStart, eventOptions);
+    container.addEventListener('touchend', handleInteractionEnd, eventOptions);
+    container.addEventListener('touchcancel', handleInteractionEnd, eventOptions);
+    container.addEventListener('touchmove', handleInteractionStart, eventOptions);
+    container.addEventListener('scroll', handleScroll, eventOptions);
+
+    resetAutoScroll();
+
+    return () => {
+      isMobileQuery.removeEventListener('change', handleMobileChange);
+      prefersMotionQuery.removeEventListener('change', handleMotionChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      stopAutoScroll();
+      if (resumeTimeoutId) clearTimeout(resumeTimeoutId);
+
+      container.removeEventListener('pointerdown', handleInteractionStart);
+      window.removeEventListener('pointerup', handleInteractionEnd);
+      window.removeEventListener('pointercancel', handleInteractionEnd);
+      container.removeEventListener('touchstart', handleInteractionStart);
+      container.removeEventListener('touchend', handleInteractionEnd);
+      container.removeEventListener('touchcancel', handleInteractionEnd);
+      container.removeEventListener('touchmove', handleInteractionStart);
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <section
@@ -96,7 +271,7 @@ export default function ThumbnailGallery({ onSelect }) {
         </a>
       </div>
 
-      <div className="thumbnails-grid">
+      <div className="thumbnails-grid" ref={gridRef}>
         {portfolioThumbnails.map((item, index) => (
           <ThumbnailCard key={item.id} item={item} index={index} onSelect={onSelect} />
         ))}
