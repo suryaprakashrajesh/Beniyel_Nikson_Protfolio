@@ -3452,15 +3452,79 @@ input:focus-visible {
 
 @media (max-width: 767px) {
   .thumbnails-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 16px;
+    margin-inline: -24px; /* Bleed scroll container to edge of viewport */
+    padding-inline: 24px; /* Maintain alignment for scrolled items */
+    scroll-padding-inline: 24px; /* Snap points match alignment */
+    padding-bottom: 20px; /* Leave breathing room for custom scrollbar */
+    
+    /* Styled scrollbar for Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.05);
+  }
+
+  .thumbnails-grid::-webkit-scrollbar {
+    display: block; /* Show custom scrollbar for Chrome/Safari */
+    height: 3px; /* A thin sleek scroll line */
+  }
+
+  .thumbnails-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    margin-inline: 24px; /* Align track with page margins */
+  }
+
+  .thumbnails-grid::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 2px;
   }
 
   .thumbnail-card.featured,
   .thumbnail-card.shorts,
   .thumbnail-card.standard {
-    grid-column: span 1;
-    grid-row: span auto;
+    flex: 0 0 85%; /* Let the next card peek in on the right edge */
+    scroll-snap-align: start;
+    height: auto;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  /* Reset aspect ratios on mobile for all cards to match standard card aspect-ratio */
+  .thumbnail-card.featured .thumb-image-wrapper,
+  .thumbnail-card.shorts .thumb-image-wrapper,
+  .thumbnail-card.standard .thumb-image-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Adjust badge positioning inside featured card on mobile */
+  .thumbnail-card.featured::before {
+    top: 20px;
+    left: 20px;
+    font-size: 0.6rem;
+    padding: 2px 8px;
+  }
+
+  .thumb-card-info {
+    padding: 10px 0 2px;
+    gap: 4px;
+  }
+
+  .thumb-title {
+    font-size: 0.88rem;
+    line-height: 1.3;
+  }
+
+  .thumb-info-row {
+    gap: 6px;
+  }
+
+  .thumb-role,
+  .thumb-client {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
   }
   
   .thumb-modal-content {
