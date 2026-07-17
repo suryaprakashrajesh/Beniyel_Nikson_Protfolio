@@ -39,15 +39,18 @@ function ThumbnailCard({ item, index, onSelect }) {
 
         {/* Hover overlay */}
         <div className="thumb-overlay">
-          <div className="thumb-overlay-inner">
-            <span className="thumb-overlay-label">{item.subtitle}</span>
+          <div className="thumb-overlay-content">
             <span className="thumb-overlay-client">{item.category}</span>
+            <h3 className="thumb-overlay-title">{item.title}</h3>
+            <span className="thumb-overlay-action">
+              View Project <span className="thumb-arrow-icon">→</span>
+            </span>
           </div>
         </div>
       </div>
 
       {/* Info below image */}
-      <div className="thumb-info">
+      <div className="thumb-card-info">
         <div className="thumb-info-row">
           <span className="thumb-role">{item.subtitle}</span>
           <span className="thumb-client">{item.category}</span>

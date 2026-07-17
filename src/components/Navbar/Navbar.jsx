@@ -4,6 +4,7 @@ import ThemeToggle from '../ThemeToggle/ThemeToggle';
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState('work');
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,11 +29,16 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // run once on mount
 
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   const handleLinkClick = (e, targetId) => {
     e.preventDefault();
+    setMenuOpen(false); // Close mobile menu when a link is clicked
     const element = document.getElementById(targetId);
     if (element) {
       const offsetTop = element.offsetTop - 85;
@@ -45,13 +51,27 @@ export default function Navbar() {
   };
 
   return (
-    <header id="main-header" className={scrolled ? 'scrolled' : ''}>
+    <header id="main-header" className={`${scrolled ? 'scrolled' : ''} ${menuOpen ? 'menu-open' : ''}`}>
       <div className="header-container">
         <a href="#" className="logo" onClick={(e) => handleLinkClick(e, 'work')}>
           BENIYEL NIKSON<span className="logo-dot">.</span>
         </a>
 
-        <nav className="nav-links">
+        {/* Mobile menu toggle button */}
+        <button 
+          className="nav-hamburger" 
+          onClick={() => setMenuOpen(!menuOpen)} 
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+        >
+          <span className="hamburger-box">
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </span>
+        </button>
+
+        <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <a
             href="#work"
             className={`nav-link ${activeSection === 'work' ? 'active' : ''}`}

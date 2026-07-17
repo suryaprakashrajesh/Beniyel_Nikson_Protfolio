@@ -9,6 +9,7 @@ export default function Hero() {
   });
 
   const handleMouseMove = (e) => {
+    if (window.matchMedia('(hover: none)').matches) return;
     const heroEl = e.currentTarget;
     const { left, top, width, height } = heroEl.getBoundingClientRect();
     
@@ -132,7 +133,7 @@ export default function Hero() {
           {/* Available for Freelance badge */}
           <div className="hero-available-badge">
             <span className="badge-avatar" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </span>
             <span className="badge-label">Available for Freelance</span>
           </div>
