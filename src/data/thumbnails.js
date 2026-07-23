@@ -4,7 +4,7 @@ import thumbNicTh from '../assets/thumbnail/NicTh.jpg';
 import thumbNefcom from '../assets/thumbnail/Nefcom.jpg';
 import thumbDPSTL from '../assets/thumbnail/DPSTL.jpg';
 import thumbZibai from '../assets/thumbnail/zibai.jpg';
-import thumbTHYTL from '../assets/thumbnail/THYTL.jpg';
+import thumbfurina from '../assets/thumbnail/furina.jpg';
 import thumbPrune from '../assets/thumbnail/Prune.jpg';
 import thumbSandrone from '../assets/thumbnail/sandrone.jpg';
 
@@ -65,10 +65,10 @@ export const portfolioThumbnails = [
   },
   {
     id: 7,
-    title: "Chill Stream With Nicole",
-    subtitle: "Nicole",
+    title: "Chill Stream With Furina ",
+    subtitle: "Furina",
     category: "Genshin Impact",
-    image: thumbTHYTL,
+    image: thumbfurina,
     youtube: "https://www.youtube.com/watch?v=_SDnHX6Dsc4",
     variant: "standard"
   },
