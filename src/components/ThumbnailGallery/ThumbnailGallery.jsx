@@ -156,7 +156,7 @@ function setupRowAutoScroll(container, { initialDirection = 1, startFromEnd = fa
         currentScrollLeft = container.scrollLeft;
         lastTime = null;
       }
-    }, 5000); // 5 seconds wait before resuming
+    }, 1000); // 1 second wait before resuming
   };
 
   const handleInteractionStart = () => {
@@ -167,6 +167,7 @@ function setupRowAutoScroll(container, { initialDirection = 1, startFromEnd = fa
   };
 
   const handleInteractionEnd = () => {
+    if (!isUserInteracting) return;
     isUserInteracting = false;
     pauseAutoScroll();
   };
