@@ -3450,7 +3450,19 @@ input:focus-visible {
 }
 
 
+@media (min-width: 769px) {
+  .thumbnails-row-2 {
+    display: none !important;
+  }
+}
+
 @media (max-width: 768px) {
+  .thumbnails-grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .thumbnails-grid {
     display: flex;
     overflow-x: auto;
@@ -3459,7 +3471,7 @@ input:focus-visible {
     margin-inline: -24px; /* Bleed scroll container to edge of viewport */
     padding-inline: 24px; /* Maintain alignment for scrolled items */
     scroll-padding-inline: 24px; /* Snap points match alignment */
-    padding-bottom: 20px; /* Leave breathing room for custom scrollbar */
+    padding-bottom: 16px; /* Leave breathing room for custom scrollbar */
     
     /* Styled scrollbar for Firefox */
     scrollbar-width: thin;
